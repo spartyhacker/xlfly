@@ -95,7 +95,7 @@ def main():
     root.title("Excel智慧云V3")
     root.geometry("300x70")
     root.attributes("-topmost", 1)
-    root.iconbitmap("icon.ico")
+    # root.iconbitmap("icon.ico")
 
     # put widgets
     btn_run = ttk.Button(root, text="️Hello", command=hello)
