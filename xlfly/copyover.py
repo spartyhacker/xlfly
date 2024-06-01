@@ -54,7 +54,6 @@ def main():
     src = r"C:\Users\Tony\OneDrive\Documents\src_data.xlsx"
     wb = xw.books.open(src)
     address = wb.sheets["Sheet1"]["A1"].expand("table").get_address()
-    pass
 
 
 if __name__ == "__main__":

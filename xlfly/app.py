@@ -92,7 +92,7 @@ def run_cell():
 def main():
     # UI
     root = tk.Tk()
-    root.title("Excel智慧云V3")
+    root.title("xlfly")
     root.geometry("300x70")
     root.attributes("-topmost", 1)
     # root.iconbitmap("icon.ico")
@@ -102,12 +102,12 @@ def main():
     btn_run.pack(side=tk.LEFT)
 
     btn_create_config = ttk.Button(
-        root, text="生成配置页", command=lambda: exec_func(create_config)
+        root, text="Add Config Sheet", command=lambda: exec_func(create_config)
     )
     btn_create_config.pack(side=tk.LEFT)
 
     btn_run_selected = ttk.Button(
-        root, text="运行单元格Python", command=lambda: exec_func(run_cell)
+        root, text="Run Python", command=lambda: exec_func(run_cell)
     )
     btn_run_selected.pack(side=tk.LEFT)
 
