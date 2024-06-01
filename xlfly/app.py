@@ -86,7 +86,12 @@ def run_cell():
             else:
                 exec(f"{r.Name} = {r.Value}")
 
-    exec(cmd, locals(), globals())
+    # support multiple cell selection
+    if isinstance(cmd, list):
+        for c in cmd:
+            exec(c, locals(), globals())
+    else:
+        exec(cmd, locals(), globals())
 
 
 def main():
