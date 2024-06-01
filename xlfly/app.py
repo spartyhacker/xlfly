@@ -95,7 +95,8 @@ def main():
     root.title("xlfly")
     root.geometry("300x70")
     root.attributes("-topmost", 1)
-    # root.iconbitmap("icon.ico")
+    icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
+    root.iconbitmap(icon_path)
 
     # put widgets
     btn_run = ttk.Button(root, text="️Hello", command=hello)
