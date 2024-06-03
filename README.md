@@ -7,3 +7,10 @@ This package only works on Windows
 To run the program without window, run：
 >> pythonw -m xlfly
 
+Excel selection to "Run Python"
+1. Write python expressions in the cells
+2. Select the cell with python scripts
+3. Click "Run Python" button
+
+
+I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn by Monsieur Steven Ankri. Thanks!
