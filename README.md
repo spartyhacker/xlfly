@@ -4,8 +4,8 @@ I love xlwings! However, I have noticed it very difficult to handle heavy calcul
 
 This package only works on Windows
 
-To run the program without window, run：
->> pythonw -m xlfly
+Create Windows Start Menu Item:
+>> xly --init
 
 Excel selection to "Run Python"
 1. Write python expressions in the cells

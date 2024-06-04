@@ -12,6 +12,7 @@ import win32com.client
 
 # TODO: add this to post pip install
 def create_shortcut():
+    print("Creating start menu item...")
     python_path = sys.prefix
     pythonw_path = os.path.join(python_path, "pythonw.exe")
     curr_path = os.path.dirname(__file__)
