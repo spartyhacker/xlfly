@@ -17,6 +17,3 @@ pywin32 = "^306"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
-
-[tool.poetry.scripts]
-xlfly = "xlfly.app:main"

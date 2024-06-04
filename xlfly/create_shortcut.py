@@ -10,6 +10,7 @@ import sys
 import win32com.client
 
 
+# TODO: add this to post pip install
 def create_shortcut():
     python_path = sys.prefix
     pythonw_path = os.path.join(python_path, "pythonw.exe")

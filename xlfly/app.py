@@ -62,7 +62,11 @@ def get_configs():
 def run_cell():
     app = xw.apps.active
     selected = app.selection
-    cmd = selected.value
+    if isinstance(selected.value, str):
+        df_construct = [selected.value]
+    else:
+        df_construct = selected.value
+    cmd = pd.DataFrame(df_construct).stack().reset_index(drop=True)
     df = get_configs()
     sys.path.append(df.loc["script_path"].value)
     pre_cmd = df.loc["pre_cmd"].value
@@ -87,11 +91,8 @@ def run_cell():
                 exec(f"{r.Name} = {r.Value}")
 
     # support multiple cell selection
-    if isinstance(cmd, list):
-        for c in cmd:
-            exec(c, locals(), globals())
-    else:
-        exec(cmd, locals(), globals())
+    for c in cmd:
+        exec(c, locals(), globals())
 
 
 def main():
