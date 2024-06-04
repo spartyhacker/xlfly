@@ -5,7 +5,10 @@ I love xlwings! However, I have noticed it very difficult to handle heavy calcul
 This package only works on Windows
 
 Create Windows Start Menu Item:
->> xly --init
+
+```bash
+>>> xly --init
+```
 
 Excel selection to "Run Python"
 1. Write python expressions in the cells
