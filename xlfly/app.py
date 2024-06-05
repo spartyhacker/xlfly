@@ -1,14 +1,19 @@
 import tkinter as tk
 from tkinter import ttk, messagebox, font
-import xlwings as xw
+from tkinter.scrolledtext import ScrolledText
 import sys
-import pandas as pd
 import os
+import threading
+import subprocess
 
-# import copyover to enable xw.Range.to_link()
+# to debug, you need this
+import xlwings as xw
+import pandas as pd
 import xlfly.copyover
+from xlfly.check_package import check_requirements, install_packages
 
 CONFIG_PAGE_NAME = "xlfly"
+root = tk.Tk()
 
 
 # functions
@@ -28,6 +33,11 @@ def create_config():
         sht = wb.sheets.add(CONFIG_PAGE_NAME)
         sht.range("A1").value = "script_path"
         sht.range("A2").value = "pre_cmd"
+        sht.range("B2").value = "sht = xw.books.active.sheets.active"
+        sht.range("A3").value = "requirements"
+        sht.range("A3").api.AddComment(
+            "separate by blank, using requirements.txt syntax"
+        )
         sht.range("A7").value = "Variable Definition"
 
         df_var = pd.DataFrame(columns=["Name", "Value"])
@@ -50,6 +60,25 @@ def get_configs():
         return df
 
 
+def restart_app():
+    root.destroy()
+    python = sys.executable
+    os.execl(python, python, *sys.argv)
+
+
+def run_install(pkgs):
+    messagebox.showwarning("Warning Message", "Package missing, will install...")
+    print("putting scroll text")
+    sub_install_packages(pkgs)
+    print("installed")
+
+
+def sub_install_packages(pkgs):
+    open_terminal = ["cmd", "/c", "start", "cmd", "/k"]
+    command = open_terminal + [sys.executable, "-m", "pip", "install"] + pkgs
+    subprocess.Popen(command)
+
+
 def run_cell():
     app = xw.apps.active
     selected = app.selection
@@ -58,11 +87,23 @@ def run_cell():
     else:
         df_construct = selected.value
     cmd = pd.DataFrame(df_construct).stack().reset_index(drop=True)
+
+    # get configs
     df = get_configs()
     sys.path.append(df.loc["script_path"].value)
     pre_cmd = df.loc["pre_cmd"].value
     if pre_cmd:
         exec(pre_cmd)
+
+    # check packages
+    rqm = df.loc["requirements"].value
+    pkgs = check_requirements(rqm)
+    if pkgs:
+        print("\nInstalling missing packages...")
+        run_install(pkgs)
+        restart_app()
+    else:
+        print("\nAll packages are already installed and meet the version requirements.")
 
     # define variables
     wb = app.books.active
@@ -87,8 +128,10 @@ def run_cell():
 
 
 def main():
+
+    # using the root instance from outside this function
+
     # UI
-    root = tk.Tk()
     root.title("xlfly")
     # root.geometry("200x100")
     root.attributes("-topmost", 1)
@@ -109,11 +152,6 @@ def main():
         style="Larger.TButton",
     )
     btn_run_selected.pack(pady=10, padx=50)
-
-    # btn_create_config = ttk.Button(
-    #     root, text="Add Config Sheet", command=lambda: exec_func(create_config)
-    # )
-    # btn_create_config.pack(side=tk.LEFT)
 
     # Create the menu bar
     menu_bar = tk.Menu(root)

@@ -17,3 +17,13 @@ Excel selection to "Run Python"
 
 
 I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn by Monsieur Steven Ankri. Thanks!
+
+## Debug
+
+To debug the scripts in Excel, put the following header to your script:
+
+```python
+import xlwings as xw
+import pandas as pd
+import xlfly.copyover
+```
