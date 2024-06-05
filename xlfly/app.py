@@ -1,26 +1,17 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, font
 import xlwings as xw
 import sys
 import pandas as pd
 import os
 
-# import local module
-from xlfly.copyover import *
+# import copyover to enable xw.Range.to_link()
+import xlfly.copyover
 
 CONFIG_PAGE_NAME = "xlfly"
 
 
 # functions
-def hello():
-    # use the following syntax to catch error message for users
-    try:
-        rng = xw.books.active.sheets.active.range("A1")
-        rng.value = "hello world"
-    except Exception as e:
-        messagebox.showerror("Error", repr(e))
-
-
 def exec_func(func):
     try:
         func()
@@ -99,25 +90,44 @@ def main():
     # UI
     root = tk.Tk()
     root.title("xlfly")
-    root.geometry("300x70")
+    # root.geometry("200x100")
     root.attributes("-topmost", 1)
     icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
     root.iconbitmap(icon_path)
 
     # put widgets
-    btn_run = ttk.Button(root, text="️Hello", command=hello)
-    btn_run.pack(side=tk.LEFT)
+    larger_font = font.Font(family="Helvetica", size=16, weight="bold")
 
-    btn_create_config = ttk.Button(
-        root, text="Add Config Sheet", command=lambda: exec_func(create_config)
-    )
-    btn_create_config.pack(side=tk.LEFT)
+    # Create a style and configure the custom style with the larger font
+    style = ttk.Style()
+    style.configure("Larger.TButton", font=larger_font)
 
     btn_run_selected = ttk.Button(
-        root, text="Run Python", command=lambda: exec_func(run_cell)
+        root,
+        text="Run Python",
+        command=lambda: exec_func(run_cell),
+        style="Larger.TButton",
     )
-    btn_run_selected.pack(side=tk.LEFT)
+    btn_run_selected.pack(pady=10, padx=50)
 
+    # btn_create_config = ttk.Button(
+    #     root, text="Add Config Sheet", command=lambda: exec_func(create_config)
+    # )
+    # btn_create_config.pack(side=tk.LEFT)
+
+    # Create the menu bar
+    menu_bar = tk.Menu(root)
+    root.config(menu=menu_bar)
+
+    file_menu = tk.Menu(menu_bar, tearoff=0)
+    menu_bar.add_cascade(label="Tools", menu=file_menu)
+    file_menu.add_command(
+        label="Add Config Sheet", command=lambda: exec_func(create_config)
+    )
+    file_menu.add_separator()
+    file_menu.add_command(label="Exit", command=root.quit)
+
+    # run mainloop
     root.mainloop()
 
 
