@@ -67,16 +67,17 @@ def restart_app():
 
 
 def run_install(pkgs):
-    messagebox.showwarning("Warning Message", "Package missing, will install...")
-    print("putting scroll text")
+    messagebox.showwarning(
+        "Warning Message", "Missing depended python packages, will install now"
+    )
     sub_install_packages(pkgs)
-    print("installed")
 
 
 def sub_install_packages(pkgs):
-    open_terminal = ["cmd", "/c", "start", "cmd", "/k"]
-    command = open_terminal + [sys.executable, "-m", "pip", "install"] + pkgs
-    subprocess.Popen(command)
+    # open_terminal = ["cmd", "/c", "start", "cmd", "/k"]
+    # command = open_terminal + [sys.executable, "-m", "pip", "install"] + pkgs
+    command = [sys.executable, "-m", "pip", "install"] + pkgs
+    subprocess.check_call(command)
 
 
 def run_cell():
