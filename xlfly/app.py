@@ -91,10 +91,14 @@ def run_cell():
 
     # get configs
     df = get_configs()
+
+    # append path
     sys.path.append(df.loc["script_path"].value)
     curr_wb_path = xw.books.active.fullname
     if os.path.exists(curr_wb_path):
-        sys.path.append(curr_wb_path)
+        sys.path.append(os.path.dirname(curr_wb_path))
+
+    # execute pre-command
     pre_cmd = df.loc["pre_cmd"].value
     if pre_cmd:
         exec(pre_cmd)
