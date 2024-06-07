@@ -143,7 +143,7 @@ def main():
     root.iconbitmap(icon_path)
 
     # put widgets
-    larger_font = font.Font(family="Helvetica", size=16, weight="bold")
+    larger_font = font.Font(family="Helvetica", size=12)
 
     # Create a style and configure the custom style with the larger font
     style = ttk.Style()
@@ -155,7 +155,7 @@ def main():
         command=lambda: exec_func(run_cell),
         style="Larger.TButton",
     )
-    btn_run_selected.pack(pady=10, padx=50)
+    btn_run_selected.pack(pady=5, padx=50)
 
     # Create the menu bar
     menu_bar = tk.Menu(root)

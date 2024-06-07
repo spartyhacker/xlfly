@@ -18,6 +18,10 @@ Excel selection to "Run Python"
 
 I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn by Monsieur Steven Ankri. Thanks!
 
+## path
+
+When run python, current workbook, and `script_path` setting from setting page will be added to pythonpath
+
 ## Debug
 
 To debug the scripts in Excel, put the following header to your script:
