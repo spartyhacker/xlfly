@@ -1,5 +1,6 @@
 import tkinter as tk
-from tkinter import ttk, messagebox, font
+from PIL import Image, ImageTk
+from tkinter import ttk, messagebox, font, PhotoImage
 from tkinter.scrolledtext import ScrolledText
 import sys
 import os
@@ -166,10 +167,18 @@ def main():
     style = ttk.Style()
     style.configure("Larger.TButton", font=larger_font)
 
+    # add button image
+    icon_path = r"xlfly/python.png"  # Replace with the path to your image file
+    button_ht = 20
+    icon_image = Image.open(icon_path).resize((button_ht, button_ht))
+    icon = ImageTk.PhotoImage(icon_image)
+    style.configure("Larger.TButton", image=icon)
+
     btn_run_selected = ttk.Button(
         root,
         text="Run Python",
         command=lambda: exec_func(run_cell),
+        compound=tk.LEFT,
         style="Larger.TButton",
     )
     btn_run_selected.pack(pady=5, padx=50)

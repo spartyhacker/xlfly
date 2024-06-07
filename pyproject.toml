@@ -4,13 +4,14 @@ version = "0.2.0"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-include = ["xlfly/icon.ico"]
+include = ["xlfly/icon.ico", "xlfly/python.png"]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
 xlwings = ">=0.28.0"
 pandas = ">=1.5.2"
 pywin32 = "^306"
+pillow = "^10.3.0"
 
 
 [build-system]

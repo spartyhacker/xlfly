@@ -2,6 +2,11 @@ xlfly - separate GUI based Excel tools
 
 I love xlwings! However, I have noticed it very difficult to handle heavy calculations if using user defined functions. Hence xlfly: making using UDF easier. I chose separate GUI so that I can run parallel threads easier. 
 
+## Usage
+
+1. Write python commands in Excel cells. Select it, click to run!
+2. Write python in **commments** section in Excel. Select it, and click to run!
+
 This package only works on Windows
 
 Create Windows Start Menu Item:
