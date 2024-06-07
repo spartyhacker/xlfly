@@ -4,7 +4,7 @@ I love xlwings! However, I have noticed it very difficult to handle heavy calcul
 
 ## Usage
 
-![usage demo](doc\usage_demo.png)
+![usage demo](doc/usage_demo.png)
 
 This package only works on Windows
 
