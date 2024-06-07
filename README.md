@@ -4,10 +4,13 @@ I love xlwings! However, I have noticed it very difficult to handle heavy calcul
 
 ## Usage
 
+![usage demo](doc\usage_demo.png)
+
+This package only works on Windows
+
 1. Write python commands in Excel cells. Select it, click to run!
 2. Write python in **commments** section in Excel. Select it, and click to run!
 
-This package only works on Windows
 
 Create Windows Start Menu Item:
 
