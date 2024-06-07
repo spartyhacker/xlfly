@@ -168,7 +168,7 @@ def main():
     style.configure("Larger.TButton", font=larger_font)
 
     # add button image
-    icon_path = r"xlfly/python.png"  # Replace with the path to your image file
+    icon_path = os.path.join(os.path.dirname(__file__), "python.png")
     button_ht = 20
     icon_image = Image.open(icon_path).resize((button_ht, button_ht))
     icon = ImageTk.PhotoImage(icon_image)
