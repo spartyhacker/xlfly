@@ -81,6 +81,9 @@ def sub_install_packages(pkgs):
 
 
 def run_cell():
+    import xlwings as xw
+
+    # get the command
     app = xw.apps.active
     selected = app.selection
     if isinstance(selected.value, str):
@@ -88,6 +91,16 @@ def run_cell():
     else:
         df_construct = selected.value
     cmd = pd.DataFrame(df_construct).stack().reset_index(drop=True)
+
+    # comments commands
+    comments = {}
+    for cell in selected:
+        comment = cell.api.Comment
+        if comment is not None:
+            comments[cell.address] = comment.Text()
+
+    comments_cmd = list(comments.values())
+    cmd = pd.concat([cmd, pd.Series(comments)])
 
     # get configs
     df = get_configs()

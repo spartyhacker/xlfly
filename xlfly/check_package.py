@@ -4,6 +4,9 @@ import sys
 
 
 def check_requirements(rqm_txt):
+    if rqm_txt is None:
+        return
+
     requirements = rqm_txt.split(" ")
 
     requirements = [req.strip() for req in requirements]
