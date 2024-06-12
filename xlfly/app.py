@@ -149,7 +149,7 @@ def run_cell():
         exec(c, locals(), globals())
 
 
-def main():
+def _run_main():
 
     # using the root instance from outside this function
 
@@ -200,4 +200,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    _run_main()
