@@ -82,19 +82,7 @@ def sub_install_packages(pkgs):
     subprocess.check_call(command)
 
 
-def run_cell(selected: xw.Range):
-
-    # comments commands
-    cmds = {}
-    for cell in selected:
-        comment = cell.api.Comment
-        val = cell.value
-        if comment is not None:
-            cmds[cell.address] = comment.Text()
-        elif (val is not None) and (not isinstance(val, float)):
-            cmds[cell.address] = val
-
-    cmd = list(cmds.values())
+def cmd_condition():
 
     # get configs
     df = get_configs()
@@ -107,8 +95,8 @@ def run_cell(selected: xw.Range):
 
     # execute pre-command
     pre_cmd = df.loc["pre_cmd"].value
-    if pre_cmd:
-        exec(pre_cmd)
+    # if pre_cmd:
+    #     exec(pre_cmd)
 
     # check packages
     rqm = df.loc["requirements"].value
@@ -129,15 +117,36 @@ def run_cell(selected: xw.Range):
     df_var: pd.DataFrame = (
         config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
     )
+
+    local_var = {}
     if len(df_var.dropna()) != 0:
         for id, r in df_var.iterrows():
-            # if a string, assign with quote
-            if isinstance(r.Value, str):
-                locals()[r.Name] = r.Value
-            else:
-                exec(f"{r.Name} = {r.Value}")
+            local_var[r.Name] = r.Value
 
-    # support multiple cell selection
+    return pre_cmd, local_var
+
+
+def run_cell(selected: xw.Range):
+
+    pre_cmd, local_var = cmd_condition()
+
+    for key, val in local_var.items():
+        locals()[key] = val
+
+    exec(pre_cmd)
+
+    # run the commands
+    cmds = {}
+    for cell in selected:
+        comment = cell.api.Comment
+        val = cell.value
+        if comment is not None:
+            cmds[cell.address] = comment.Text()
+        elif (val is not None) and (not isinstance(val, float)):
+            cmds[cell.address] = val
+
+    cmd = list(cmds.values())
+
     for c in cmd:
         exec(c, locals(), globals())
 
@@ -147,6 +156,32 @@ def run_selected():
     app = xw.apps.active
     selected = app.selection
     run_cell(selected)
+
+
+def create_debug_file():
+    wb_path = os.path.dirname(xw.books.active.fullname)
+    file_name = os.path.join(wb_path, "debug.py")
+    text_to_write = """
+import xlfly.app as app
+import xlwings as xw
+import pandas as pd
+
+pre_cmd, local_var = app.cmd_condition()
+
+for key, val in local_var.items():
+    locals()[key] = val
+
+exec(pre_cmd)
+
+# put your debug command here, like
+# sht["A1"].value = 1
+    """
+
+    with open(file_name, "w") as file:
+        # Write the text to the file
+        file.write(text_to_write)
+
+    print("debug.py created")
 
 
 def _run_main():
@@ -191,6 +226,9 @@ def _run_main():
     menu_bar.add_cascade(label="Tools", menu=file_menu)
     file_menu.add_command(
         label="Add Config Sheet", command=lambda: exec_func(create_config)
+    )
+    file_menu.add_command(
+        label="Create Debug Script", command=lambda: exec_func(create_debug_file)
     )
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
