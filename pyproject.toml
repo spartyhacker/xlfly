@@ -20,4 +20,4 @@ build-backend = "poetry.core.masonry.api"
 
 
 [tool.poetry.scripts]
-xly = "xlfly.scripts:_run_main"
+xly = "xlfly.scripts:main"

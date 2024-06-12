@@ -4,7 +4,7 @@ With this, you can run
 to have the application running
 """
 
-from xlfly.app import main
+from xlfly.app import _run_main
 
 if __name__ == "__main__":
-    main()
+    _run_main()
