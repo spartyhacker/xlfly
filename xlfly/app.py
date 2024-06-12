@@ -84,22 +84,20 @@ def sub_install_packages(pkgs):
 
 def run_cell(selected: xw.Range):
 
-    # get the command
-    if isinstance(selected.value, str):
-        df_construct = [selected.value]
-    else:
-        df_construct = selected.value
-    cmd = pd.DataFrame(df_construct).stack().reset_index(drop=True)
-
     # comments commands
     comments = {}
+    vals = {}
     for cell in selected:
         comment = cell.api.Comment
+        val = cell.value
+        if (val is not None) and (not isinstance(val, float)):
+            vals[cell.address] = val
         if comment is not None:
             comments[cell.address] = comment.Text()
 
+    vals_cmd = list(vals.values())
     comments_cmd = list(comments.values())
-    cmd = pd.concat([cmd, pd.Series(comments)])
+    cmd = vals_cmd + comments_cmd
 
     # get configs
     df = get_configs()
