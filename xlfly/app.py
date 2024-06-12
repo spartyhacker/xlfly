@@ -1,4 +1,5 @@
 import tkinter as tk
+import xlwings as xw
 from PIL import Image, ImageTk
 from tkinter import ttk, messagebox, font, PhotoImage
 from tkinter.scrolledtext import ScrolledText
@@ -81,12 +82,9 @@ def sub_install_packages(pkgs):
     subprocess.check_call(command)
 
 
-def run_cell():
-    import xlwings as xw
+def run_cell(selected: xw.Range):
 
     # get the command
-    app = xw.apps.active
-    selected = app.selection
     if isinstance(selected.value, str):
         df_construct = [selected.value]
     else:
@@ -128,11 +126,11 @@ def run_cell():
         print("\nAll packages are already installed and meet the version requirements.")
 
     # define variables
-    wb = app.books.active
+    wb = xw.books.active
     if CONFIG_PAGE_NAME not in [s.name for s in wb.sheets]:
         raise ValueError("Config page does not exist")
 
-    config_sht = app.books.active.sheets[CONFIG_PAGE_NAME]
+    config_sht = xw.books.active.sheets[CONFIG_PAGE_NAME]
     df_var: pd.DataFrame = (
         config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
     )
@@ -147,6 +145,13 @@ def run_cell():
     # support multiple cell selection
     for c in cmd:
         exec(c, locals(), globals())
+
+
+def run_selected():
+
+    app = xw.apps.active
+    selected = app.selection
+    run_cell(selected)
 
 
 def _run_main():
@@ -177,7 +182,7 @@ def _run_main():
     btn_run_selected = ttk.Button(
         root,
         text="Run Python",
-        command=lambda: exec_func(run_cell),
+        command=lambda: exec_func(run_selected),
         compound=tk.LEFT,
         style="Larger.TButton",
     )

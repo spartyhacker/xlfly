@@ -26,6 +26,12 @@ Excel selection to "Run Python"
 
 I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn by Monsieur Steven Ankri. Thanks!
 
+Run multiple cells with a command
+
+`run_cell(xw.books.active.sheets.active["A1:A5"])`
+
+The function `run_cell()` is always usage to put in any cell to run other batch cells
+
 ## PythonPath
 
 When run python, both `current workbook` and `script_path` setting from setting page will be added to pythonpath. You can put your draft python script file in the same folder as current Excel file to debug.
