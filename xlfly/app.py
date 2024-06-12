@@ -1,4 +1,5 @@
 import tkinter as tk
+import traceback
 import xlwings as xw
 from PIL import Image, ImageTk
 from tkinter import ttk, messagebox, font, PhotoImage
@@ -23,7 +24,11 @@ def exec_func(func):
     try:
         func()
     except Exception as e:
-        messagebox.showerror("Error", repr(e))
+        # Print the detailed traceback
+        tb_str = traceback.format_exc()
+        # print(f"Detailed traceback:\n{tb_str}")
+
+        messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
 
 def create_config():
