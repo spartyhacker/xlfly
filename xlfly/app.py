@@ -85,19 +85,16 @@ def sub_install_packages(pkgs):
 def run_cell(selected: xw.Range):
 
     # comments commands
-    comments = {}
-    vals = {}
+    cmds = {}
     for cell in selected:
         comment = cell.api.Comment
         val = cell.value
-        if (val is not None) and (not isinstance(val, float)):
-            vals[cell.address] = val
         if comment is not None:
-            comments[cell.address] = comment.Text()
+            cmds[cell.address] = comment.Text()
+        elif (val is not None) and (not isinstance(val, float)):
+            cmds[cell.address] = val
 
-    vals_cmd = list(vals.values())
-    comments_cmd = list(comments.values())
-    cmd = vals_cmd + comments_cmd
+    cmd = list(cmds.values())
 
     # get configs
     df = get_configs()
