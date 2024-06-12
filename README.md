@@ -44,3 +44,8 @@ script of the same name from Excel file folder will be imported first.
 
 - Thus you can debug by putting the scripts in the Excel folder
 - Once done, move the file to the python path specified in the config page
+
+
+Error messages will be thrown out:
+
+![error message](doc/error_msg.png)
