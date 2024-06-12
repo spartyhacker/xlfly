@@ -11,6 +11,7 @@ This package only works on Windows
 1. Write python commands in Excel cells. Select it, click to run!
 2. Write python in **commments** section in Excel. Select it, and click to run!
 
+Note: if there is numeric value and a comment on the cell, the cell will not **run** the numeric value. For example, say "A1" cell has value 1, and comment "sht["A1"].value = 1", you run it. It will not run the "1" in the cell
 
 Create Windows Start Menu Item:
 
