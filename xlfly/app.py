@@ -3,6 +3,7 @@ import traceback
 import xlwings as xw
 from PIL import Image, ImageTk
 from tkinter import ttk, messagebox, font, PhotoImage
+import shutil
 from tkinter.scrolledtext import ScrolledText
 import sys
 import os
@@ -68,12 +69,6 @@ def get_configs():
         return df
 
 
-def restart_app():
-    root.destroy()
-    python = sys.executable
-    os.execl(python, python, *sys.argv)
-
-
 def run_install(pkgs):
     messagebox.showwarning(
         "Warning Message", "Missing depended python packages, will install now"
@@ -88,110 +83,13 @@ def sub_install_packages(pkgs):
     subprocess.check_call(command)
 
 
-def cmd_condition():
-
-    # get configs
-    df = get_configs()
-
-    # append path
-    curr_wb_path = xw.books.active.fullname
-    if os.path.exists(curr_wb_path):
-        sys.path.append(os.path.dirname(curr_wb_path))
-    sys.path.append(df.loc["script_path"].value)
-
-    # check packages
-    rqm = df.loc["requirements"].value
-    pkgs = check_requirements(rqm)
-    if pkgs:
-        print("\nInstalling missing packages...")
-        run_install(pkgs)
-        restart_app()
-    else:
-        pass
-
-    # execute pre-command
-    pre_cmd = df.loc["pre_cmd"].value
-
-    # define variables
-    wb = xw.books.active
-    if CONFIG_PAGE_NAME not in [s.name for s in wb.sheets]:
-        raise ValueError("Config page does not exist")
-
-    config_sht = xw.books.active.sheets[CONFIG_PAGE_NAME]
-    df_var: pd.DataFrame = (
-        config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
-    )
-
-    local_var = {}
-    if len(df_var.dropna()) != 0:
-        for id, r in df_var.iterrows():
-            local_var[r.Name] = r.Value
-
-    return pre_cmd, local_var
-
-
-def run_cell(selected: xw.Range):
-
-    pre_cmd, local_var = cmd_condition()
-
-    for key, val in local_var.items():
-        locals()[key] = val
-
-    exec(pre_cmd)
-
-    # run the commands
-    cmds = {}
-    for cell in selected:
-        comment = cell.api.Comment
-        val = cell.value
-        if comment is not None:
-            cmds[cell.address] = comment.Text()
-        elif (val is not None) and (not isinstance(val, float)):
-            cmds[cell.address] = val
-
-    cmd = list(cmds.values())
-
-    for c in cmd:
-        exec(c, locals(), globals())
-
-
-def run_selected():
-
-    app = xw.apps.active
-    selected = app.selection
-    run_cell(selected)
-
-
 def create_debug_file():
     wb_path = os.path.dirname(xw.books.active.fullname)
-    file_name = os.path.join(wb_path, "debug.py")
-    text_to_write = """
-import xlfly.app as app
-import xlwings as xw
-import pandas as pd
-
-pre_cmd, local_var = app.cmd_condition()
-
-for key, val in local_var.items():
-    locals()[key] = val
-
-exec(pre_cmd)
-
-# put your debug command here, like
-# sht["A1"].value = 1
-    """
-
-    with open(file_name, "w") as file:
-        # Write the text to the file
-        file.write(text_to_write)
+    dst_file = os.path.join(wb_path, "debug.py")
+    src_file = os.path.join(os.path.dirname(__file__), "debug.py")
+    shutil.copy2(src_file, dst_file)
 
     print("debug.py created")
-
-
-def update_xlfly():
-    command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
-    subprocess.check_call(command)
-    restart_app()
 
 
 # console output
@@ -243,12 +141,12 @@ class XlflyApp:
         button_ht = 20
         icon_image = Image.open(icon_path).resize((button_ht, button_ht))
         icon = ImageTk.PhotoImage(icon_image)
-        style.configure("Larger.TButton", image=icon)
 
         self.btn_run_selected = ttk.Button(
             self.root,
             text="Run Python",
-            command=lambda: exec_func(run_selected),
+            image=icon,
+            command=lambda: exec_func(self.run_selected),
             compound=tk.LEFT,
             style="Larger.TButton",
         )
@@ -282,7 +180,7 @@ class XlflyApp:
         )
 
         self.file_menu.add_command(
-            label="Update xlfly", command=lambda: exec_func(update_xlfly)
+            label="Update xlfly", command=lambda: exec_func(self.update_xlfly)
         )
 
         self.file_menu.add_separator()
@@ -296,15 +194,92 @@ class XlflyApp:
 
         self.console_visible = not self.console_visible
 
+    def restart_app(self):
+        self.root.destroy()
+        python = sys.executable
+        os.execl(python, python, *sys.argv)
+
+    def update_xlfly(self):
+        command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
+        subprocess.check_call(command)
+        self.restart_app()
+
+    def cmd_condition(self):
+
+        # get configs
+        df = get_configs()
+
+        # append path
+        curr_wb_path = xw.books.active.fullname
+        if os.path.exists(curr_wb_path):
+            sys.path.append(os.path.dirname(curr_wb_path))
+        sys.path.append(df.loc["script_path"].value)
+
+        # check packages
+        rqm = df.loc["requirements"].value
+        pkgs = check_requirements(rqm)
+        if pkgs:
+            print("\nInstalling missing packages...")
+            run_install(pkgs)
+            self.restart_app()
+        else:
+            pass
+
+        # execute pre-command
+        pre_cmd = df.loc["pre_cmd"].value
+
+        # define variables
+        wb = xw.books.active
+        if CONFIG_PAGE_NAME not in [s.name for s in wb.sheets]:
+            raise ValueError("Config page does not exist")
+
+        config_sht = xw.books.active.sheets[CONFIG_PAGE_NAME]
+        df_var: pd.DataFrame = (
+            config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
+        )
+
+        local_var = {}
+        if len(df_var.dropna()) != 0:
+            for id, r in df_var.iterrows():
+                local_var[r.Name] = r.Value
+
+        return pre_cmd, local_var
+
+    def run_cell(self, selected: xw.Range):
+
+        pre_cmd, local_var = self.cmd_condition()
+
+        for key, val in local_var.items():
+            locals()[key] = val
+
+        exec(pre_cmd)
+
+        # run the commands
+        cmds = {}
+        for cell in selected:
+            comment = cell.api.Comment
+            val = cell.value
+            if comment is not None:
+                cmds[cell.address] = comment.Text()
+            elif (val is not None) and (not isinstance(val, float)):
+                cmds[cell.address] = val
+
+        cmd = list(cmds.values())
+
+        for c in cmd:
+            exec(c, locals(), globals())
+
+    def run_selected(self):
+
+        app = xw.apps.active
+        selected = app.selection
+        self.run_cell(selected)
+
 
 def _run_main():
 
     root = tk.Tk()
     app = XlflyApp(root)
-    root.mainloop()
-    # using the root instance from outside this function
-
-    # run mainloop
     root.mainloop()
 
 

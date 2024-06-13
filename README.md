@@ -50,3 +50,5 @@ script of the same name from Excel file folder will be imported first.
 Error messages will be thrown out:
 
 ![error message](doc/error_msg.png)
+
+You can also toggle to show the console at Menu: Tools > Toggle Console
