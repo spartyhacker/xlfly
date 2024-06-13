@@ -8,6 +8,8 @@ import sys
 import os
 import threading
 import subprocess
+import xlfly
+import importlib.metadata
 
 # to debug, you need this
 import xlwings as xw
@@ -198,7 +200,8 @@ def _run_main():
     # using the root instance from outside this function
 
     # UI
-    root.title("xlfly")
+    version = importlib.metadata.version("xlfly")
+    root.title(f"xlfly-{version}")
     # root.geometry("200x100")
     root.attributes("-topmost", 1)
     icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
