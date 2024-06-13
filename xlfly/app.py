@@ -189,6 +189,12 @@ exec(pre_cmd)
     print("debug.py created")
 
 
+def update_xlfly():
+    command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
+    subprocess.check_call(command)
+    restart_app()
+
+
 def _run_main():
 
     # using the root instance from outside this function
@@ -229,12 +235,17 @@ def _run_main():
 
     file_menu = tk.Menu(menu_bar, tearoff=0)
     menu_bar.add_cascade(label="Tools", menu=file_menu)
+
     file_menu.add_command(
         label="Add Config Sheet", command=lambda: exec_func(create_config)
     )
+
     file_menu.add_command(
         label="Create Debug Script", command=lambda: exec_func(create_debug_file)
     )
+
+    file_menu.add_command(label="Update xlfly", command=lambda: exec_func(update_xlfly))
+
     file_menu.add_separator()
     file_menu.add_command(label="Exit", command=root.quit)
 

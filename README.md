@@ -39,13 +39,7 @@ When run python, both `current workbook` and `script_path` setting from setting 
 
 ## Debug
 
-To debug the scripts in Excel, put the following header to your script:
-
-```python
-import xlwings as xw
-import pandas as pd
-import xlfly.copyover
-```
+To debug the scripts in Excel, run the menu: tools > create debug script. There will be a debug.py file to the same folder as current Excel file. You can start from there to debug
 
 script of the same name from Excel file folder will be imported first. 
 

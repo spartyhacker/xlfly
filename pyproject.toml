@@ -1,10 +1,15 @@
 [tool.poetry]
 name = "xlfly"
-version = "0.3.1"
+version = "0.3.2"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
-include = ["xlfly/icon.ico", "xlfly/python.png"]
+include = [
+    "xlfly/icon.ico",
+    "xlfly/python.png",
+    "doc/error_msg.png",
+    "doc/usage_demo.png",
+]
 
 [tool.poetry.dependencies]
 python = ">=3.9"
