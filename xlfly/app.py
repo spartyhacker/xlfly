@@ -18,7 +18,6 @@ import xlfly.copyover
 from xlfly.check_package import check_requirements, install_packages
 
 CONFIG_PAGE_NAME = "xlfly"
-root = tk.Tk()
 
 
 # functions
@@ -108,7 +107,7 @@ def cmd_condition():
         run_install(pkgs)
         restart_app()
     else:
-        print("\nAll packages are already installed and meet the version requirements.")
+        pass
 
     # execute pre-command
     pre_cmd = df.loc["pre_cmd"].value
@@ -195,60 +194,115 @@ def update_xlfly():
     restart_app()
 
 
+# console output
+class ConsoleOutput:
+    def __init__(self, text_widget):
+        self.text_widget = text_widget
+        self.text_widget.config(state=tk.DISABLED)
+        self.text_widget.tag_config("stdout", foreground="black")
+        self.text_widget.tag_config("stderr", foreground="red")
+
+    def write(self, message):
+        self.text_widget.config(state=tk.NORMAL)
+        self.text_widget.insert(tk.END, message, ("stdout",))
+        self.text_widget.see(tk.END)
+        self.text_widget.config(state=tk.DISABLED)
+
+    def flush(self):
+        pass
+
+
+class ErrorOutput(ConsoleOutput):
+    def write(self, message):
+        self.text_widget.config(state=tk.NORMAL)
+        self.text_widget.insert(tk.END, message, ("stderr",))
+        self.text_widget.see(tk.END)
+        self.text_widget.config(state=tk.DISABLED)
+
+
+class XlflyApp:
+    def __init__(self, root):
+        self.root = root
+        # UI
+        version = importlib.metadata.version("xlfly")
+        self.root.title(f"xlfly-{version}")
+        self.root.attributes("-topmost", 1)
+        icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
+        self.root.iconbitmap(icon_path)
+        self.console_visible = False
+
+        # put widgets
+        larger_font = font.Font(family="Helvetica", size=12)
+
+        # Create a style and configure the custom style with the larger font
+        style = ttk.Style()
+        style.configure("Larger.TButton", font=larger_font)
+
+        # add button image
+        icon_path = os.path.join(os.path.dirname(__file__), "python.png")
+        button_ht = 20
+        icon_image = Image.open(icon_path).resize((button_ht, button_ht))
+        icon = ImageTk.PhotoImage(icon_image)
+        style.configure("Larger.TButton", image=icon)
+
+        self.btn_run_selected = ttk.Button(
+            self.root,
+            text="Run Python",
+            command=lambda: exec_func(run_selected),
+            compound=tk.LEFT,
+            style="Larger.TButton",
+        )
+        self.btn_run_selected.pack(pady=5, padx=50)
+
+        # Create a ScrolledText widget
+        self.console_text = ScrolledText(self.root, wrap=tk.WORD, width=80, height=20)
+        # self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        # Redirect stdout and stderr
+        sys.stdout = ConsoleOutput(self.console_text)
+        sys.stderr = ErrorOutput(self.console_text)
+
+        # Create the menu bar
+        self.menu_bar = tk.Menu(self.root)
+        self.root.config(menu=self.menu_bar)
+
+        self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Tools", menu=self.file_menu)
+
+        self.file_menu.add_command(
+            label="Add Config Sheet", command=lambda: exec_func(create_config)
+        )
+
+        self.file_menu.add_command(
+            label="Create Debug Script", command=lambda: exec_func(create_debug_file)
+        )
+
+        self.file_menu.add_command(
+            label="Toggle Console", command=lambda: exec_func(self.toggle_console)
+        )
+
+        self.file_menu.add_command(
+            label="Update xlfly", command=lambda: exec_func(update_xlfly)
+        )
+
+        self.file_menu.add_separator()
+        self.file_menu.add_command(label="Exit", command=root.quit)
+
+    def toggle_console(self):
+        if self.console_visible:
+            self.console_text.pack_forget()
+        else:
+            self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        self.console_visible = not self.console_visible
+
+
 def _run_main():
 
+    root = tk.Tk()
+    app = XlflyApp(root)
+    root.mainloop()
     # using the root instance from outside this function
-
-    # UI
-    version = importlib.metadata.version("xlfly")
-    root.title(f"xlfly-{version}")
-    # root.geometry("200x100")
-    root.attributes("-topmost", 1)
-    icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
-    root.iconbitmap(icon_path)
-
-    # put widgets
-    larger_font = font.Font(family="Helvetica", size=12)
-
-    # Create a style and configure the custom style with the larger font
-    style = ttk.Style()
-    style.configure("Larger.TButton", font=larger_font)
-
-    # add button image
-    icon_path = os.path.join(os.path.dirname(__file__), "python.png")
-    button_ht = 20
-    icon_image = Image.open(icon_path).resize((button_ht, button_ht))
-    icon = ImageTk.PhotoImage(icon_image)
-    style.configure("Larger.TButton", image=icon)
-
-    btn_run_selected = ttk.Button(
-        root,
-        text="Run Python",
-        command=lambda: exec_func(run_selected),
-        compound=tk.LEFT,
-        style="Larger.TButton",
-    )
-    btn_run_selected.pack(pady=5, padx=50)
-
-    # Create the menu bar
-    menu_bar = tk.Menu(root)
-    root.config(menu=menu_bar)
-
-    file_menu = tk.Menu(menu_bar, tearoff=0)
-    menu_bar.add_cascade(label="Tools", menu=file_menu)
-
-    file_menu.add_command(
-        label="Add Config Sheet", command=lambda: exec_func(create_config)
-    )
-
-    file_menu.add_command(
-        label="Create Debug Script", command=lambda: exec_func(create_debug_file)
-    )
-
-    file_menu.add_command(label="Update xlfly", command=lambda: exec_func(update_xlfly))
-
-    file_menu.add_separator()
-    file_menu.add_command(label="Exit", command=root.quit)
 
     # run mainloop
     root.mainloop()
