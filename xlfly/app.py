@@ -98,11 +98,6 @@ def cmd_condition():
         sys.path.append(os.path.dirname(curr_wb_path))
     sys.path.append(df.loc["script_path"].value)
 
-    # execute pre-command
-    pre_cmd = df.loc["pre_cmd"].value
-    # if pre_cmd:
-    #     exec(pre_cmd)
-
     # check packages
     rqm = df.loc["requirements"].value
     pkgs = check_requirements(rqm)
@@ -112,6 +107,9 @@ def cmd_condition():
         restart_app()
     else:
         print("\nAll packages are already installed and meet the version requirements.")
+
+    # execute pre-command
+    pre_cmd = df.loc["pre_cmd"].value
 
     # define variables
     wb = xw.books.active
