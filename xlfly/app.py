@@ -194,6 +194,14 @@ class XlflyApp:
 
         self.console_visible = not self.console_visible
 
+    def show_console(self):
+        self.console_visible = True
+        self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+    def hide_console(self):
+        self.console_visible = False
+        self.console_text.pack_forget()
+
     def restart_app(self):
         self.root.destroy()
         python = sys.executable

@@ -19,6 +19,7 @@ Create Windows Start Menu Item:
 >>> xly --init
 ```
 
+
 Excel selection to "Run Python"
 1. Write python expressions in the cells
 2. Select the cell with python scripts
@@ -27,11 +28,28 @@ Excel selection to "Run Python"
 
 I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn by Monsieur Steven Ankri. Thanks!
 
-Run multiple cells with a command
+### Special commands
 
-`run_cell(xw.books.active.sheets.active["A1:A5"])`
+* self.run_cell()
 
-The function `run_cell()` is always usage to put in any cell to run other batch cells
+    Run multiple cells with a command
+
+    Example:
+    `run_cell(xw.books.active.sheets.active["A1:A5"])`
+
+* xw.Range.to_link()
+
+    Convert the range to link texts values. It is used for cases where you want to preserve the link to update the data in the future
+
+* self.show_console()
+
+    Show the console window. In case you want to give the user indicator info in console window
+
+* self.hide_console()
+
+    Hide the console 
+
+
 
 ## PythonPath
 
