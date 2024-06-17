@@ -263,14 +263,20 @@ class XlflyApp:
         exec(pre_cmd)
 
         # run the commands
+        # support for non-continous range selection
         cmds = {}
-        for cell in selected:
-            comment = cell.api.Comment
-            val = cell.value
-            if comment is not None:
-                cmds[cell.address] = comment.Text()
-            elif (val is not None) and (not isinstance(val, float)):
-                cmds[cell.address] = val
+        act_sht = xw.books.active.sheets.active
+        rng_parts = selected.address.split(",")
+        rng_lst = [act_sht.range(p) for p in rng_parts]
+
+        for rng in rng_lst:
+            for cell in rng:
+                comment = cell.api.Comment
+                val = cell.value
+                if comment is not None:
+                    cmds[cell.address] = comment.Text()
+                elif (val is not None) and (not isinstance(val, float)):
+                    cmds[cell.address] = val
 
         cmd = list(cmds.values())
 
