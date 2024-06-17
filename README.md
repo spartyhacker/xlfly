@@ -70,3 +70,5 @@ Error messages will be thrown out:
 ![error message](doc/error_msg.png)
 
 You can also toggle to show the console at Menu: Tools > Toggle Console
+
+Progress: suggest to use xlwings's app.status_bar = "status message" to display process message

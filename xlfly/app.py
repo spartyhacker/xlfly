@@ -1,4 +1,9 @@
 import tkinter as tk
+from tkinter import scrolledtext
+import queue
+import threading
+import sys
+import time
 import traceback
 import xlwings as xw
 from PIL import Image, ImageTk
@@ -7,7 +12,6 @@ import shutil
 from tkinter.scrolledtext import ScrolledText
 import sys
 import os
-import threading
 import subprocess
 import xlfly
 import importlib.metadata
@@ -22,15 +26,6 @@ CONFIG_PAGE_NAME = "xlfly"
 
 
 # functions
-def exec_func(func):
-    try:
-        func()
-    except Exception as e:
-        # Print the detailed traceback
-        tb_str = traceback.format_exc()
-        # print(f"Detailed traceback:\n{tb_str}")
-
-        messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
 
 def create_config():
@@ -77,8 +72,6 @@ def run_install(pkgs):
 
 
 def sub_install_packages(pkgs):
-    # open_terminal = ["cmd", "/c", "start", "cmd", "/k"]
-    # command = open_terminal + [sys.executable, "-m", "pip", "install"] + pkgs
     command = [sys.executable, "-m", "pip", "install"] + pkgs
     subprocess.check_call(command)
 
@@ -92,32 +85,6 @@ def create_debug_file():
     print("debug.py created")
 
 
-# console output
-class ConsoleOutput:
-    def __init__(self, text_widget):
-        self.text_widget = text_widget
-        self.text_widget.config(state=tk.DISABLED)
-        self.text_widget.tag_config("stdout", foreground="black")
-        self.text_widget.tag_config("stderr", foreground="red")
-
-    def write(self, message):
-        self.text_widget.config(state=tk.NORMAL)
-        self.text_widget.insert(tk.END, message, ("stdout",))
-        self.text_widget.see(tk.END)
-        self.text_widget.config(state=tk.DISABLED)
-
-    def flush(self):
-        pass
-
-
-class ErrorOutput(ConsoleOutput):
-    def write(self, message):
-        self.text_widget.config(state=tk.NORMAL)
-        self.text_widget.insert(tk.END, message, ("stderr",))
-        self.text_widget.see(tk.END)
-        self.text_widget.config(state=tk.DISABLED)
-
-
 class XlflyApp:
     def __init__(self, root):
         self.root = root
@@ -129,7 +96,7 @@ class XlflyApp:
         self.root.iconbitmap(icon_path)
         self.console_visible = False
 
-        # put widgets
+        # put button
         larger_font = font.Font(family="Helvetica", size=12)
 
         # Create a style and configure the custom style with the larger font
@@ -146,19 +113,11 @@ class XlflyApp:
             self.root,
             text="Run Python",
             image=icon,
-            command=lambda: exec_func(self.run_selected),
+            command=lambda: self.exec_func(self.run_selected),
             compound=tk.LEFT,
             style="Larger.TButton",
         )
         self.btn_run_selected.pack(pady=5, padx=50)
-
-        # Create a ScrolledText widget
-        self.console_text = ScrolledText(self.root, wrap=tk.WORD, width=80, height=20)
-        # self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-
-        # Redirect stdout and stderr
-        sys.stdout = ConsoleOutput(self.console_text)
-        sys.stderr = ErrorOutput(self.console_text)
 
         # Create the menu bar
         self.menu_bar = tk.Menu(self.root)
@@ -168,31 +127,41 @@ class XlflyApp:
         self.menu_bar.add_cascade(label="Tools", menu=self.file_menu)
 
         self.file_menu.add_command(
-            label="Add Config Sheet", command=lambda: exec_func(create_config)
+            label="Add Config Sheet", command=lambda: self.exec_func(create_config)
         )
 
         self.file_menu.add_command(
-            label="Create Debug Script", command=lambda: exec_func(create_debug_file)
+            label="Create Debug Script",
+            command=lambda: self.exec_func(create_debug_file),
         )
 
-        self.file_menu.add_command(
-            label="Toggle Console", command=lambda: exec_func(self.toggle_console)
-        )
+        # self.file_menu.add_command(
+        #     label="Toggle Console", command=lambda: self.exec_func(self.toggle_console)
+        # )
 
         self.file_menu.add_command(
-            label="Update xlfly", command=lambda: exec_func(self.update_xlfly)
+            label="Update xlfly", command=lambda: self.exec_func(self.update_xlfly)
         )
 
         self.file_menu.add_separator()
         self.file_menu.add_command(label="Exit", command=root.quit)
 
-    def toggle_console(self):
-        if self.console_visible:
-            self.console_text.pack_forget()
-        else:
-            self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+    def exec_func(self, func):
+        try:
+            func()
+        except Exception as e:
+            # Print the detailed traceback
+            tb_str = traceback.format_exc()
 
-        self.console_visible = not self.console_visible
+            messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
+
+    # def toggle_console(self):
+    #     if self.console_visible:
+    #         self.console_text.pack_forget()
+    #     else:
+    #         self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+    #     self.console_visible = not self.console_visible
 
     def show_console(self):
         self.console_visible = True
