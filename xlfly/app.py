@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import scrolledtext
+from tkinter import scrolledtext, filedialog
 import queue
 import threading
 import sys
@@ -21,6 +21,7 @@ import xlwings as xw
 import pandas as pd
 import xlfly.copyover
 from xlfly.check_package import check_requirements, install_packages
+import xlfly.configs as configs
 
 CONFIG_PAGE_NAME = "xlfly"
 
@@ -88,6 +89,10 @@ def create_debug_file():
 class XlflyApp:
     def __init__(self, root):
         self.root = root
+
+        # load in settings
+        self.settings = configs.load_settings()
+
         # UI
         version = importlib.metadata.version("xlfly")
         self.root.title(f"xlfly-{version}")
@@ -118,33 +123,71 @@ class XlflyApp:
             style="Larger.TButton",
         )
         self.btn_run_selected.pack(pady=5, padx=50)
+        self.add_menu()
 
+    def add_menu(self):
         # Create the menu bar
         self.menu_bar = tk.Menu(self.root)
         self.root.config(menu=self.menu_bar)
 
+        # file_menu
         self.file_menu = tk.Menu(self.menu_bar, tearoff=0)
-        self.menu_bar.add_cascade(label="Tools", menu=self.file_menu)
+        self.menu_bar.add_cascade(label="File", menu=self.file_menu)
 
         self.file_menu.add_command(
             label="Add Config Sheet", command=lambda: self.exec_func(create_config)
         )
 
         self.file_menu.add_command(
-            label="Create Debug Script",
-            command=lambda: self.exec_func(create_debug_file),
-        )
-
-        # self.file_menu.add_command(
-        #     label="Toggle Console", command=lambda: self.exec_func(self.toggle_console)
-        # )
-
-        self.file_menu.add_command(
             label="Update xlfly", command=lambda: self.exec_func(self.update_xlfly)
         )
 
         self.file_menu.add_separator()
-        self.file_menu.add_command(label="Exit", command=root.quit)
+        self.file_menu.add_command(label="Exit", command=self.root.quit)
+
+        # Debug menu
+        self.debug_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Debug", menu=self.debug_menu)
+        self.debug_menu.add_command(
+            label="Create Debug Script",
+            command=lambda: self.exec_func(create_debug_file),
+        )
+
+        self.debug_menu.add_command(
+            label="Restart", command=lambda: self.exec_func(self.restart_app)
+        )
+
+        # Templates menu
+        self.template_menu = tk.Menu(self.menu_bar, tearoff=0)
+        self.menu_bar.add_cascade(label="Template", menu=self.template_menu)
+        self.template_menu.add_command(
+            label="Set Template Folder",
+            command=lambda: self.exec_func(self.set_tempfolder),
+        )
+
+        self.template_menu.add_command(
+            label="Choose Template",
+            command=lambda: self.exec_func(self.choose_temp),
+        )
+
+        self.template_menu.add_command(
+            label="Init Template",
+            command=lambda: self.exec_func(self.init_temp),
+        )
+
+    # templates related functions
+    def set_tempfolder(self):
+        folder_path = filedialog.askdirectory()
+        if folder_path:
+            print(f"Selected folder: {folder_path}")
+            self.settings["tempfolder"] = folder_path
+            configs.save_settings(self.settings)
+
+    def choose_temp(self):
+        print("selecting template")
+
+    def init_temp(self):
+        print("init template")
 
     def exec_func(self, func):
         try:

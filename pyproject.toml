@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "xlfly"
-version = "0.3.4"
+version = "0.3.5"
 description = ""
 authors = ["Your Name <you@example.com>"]
 readme = "README.md"
@@ -17,6 +17,7 @@ xlwings = ">=0.28.0"
 pandas = ">=1.5.2"
 pywin32 = "^306"
 pillow = ">=9.4.0"
+toml = "^0.10.2"
 
 
 [build-system]
