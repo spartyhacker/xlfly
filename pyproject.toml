@@ -15,9 +15,9 @@ include = [
 python = ">=3.9"
 xlwings = ">=0.28.0"
 pandas = ">=1.5.2"
-pywin32 = "^306"
+pywin32 = ">=300"
 pillow = ">=9.4.0"
-toml = "^0.10.2"
+toml = ">=0.9.2"
 
 
 [build-system]
