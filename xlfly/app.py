@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import scrolledtext, filedialog
+import imp
 import queue
 import threading
 import sys
@@ -22,6 +23,7 @@ import pandas as pd
 import xlfly.copyover
 from xlfly.check_package import check_requirements, install_packages
 import xlfly.configs as configs
+from xlfly.pop_template import TempWindow
 
 CONFIG_PAGE_NAME = "xlfly"
 
@@ -92,6 +94,7 @@ class XlflyApp:
 
         # load in settings
         self.settings = configs.load_settings()
+        self.selected_temp = None
 
         # UI
         version = importlib.metadata.version("xlfly")
@@ -170,11 +173,6 @@ class XlflyApp:
             command=lambda: self.exec_func(self.choose_temp),
         )
 
-        self.template_menu.add_command(
-            label="Init Template",
-            command=lambda: self.exec_func(self.init_temp),
-        )
-
     # templates related functions
     def set_tempfolder(self):
         folder_path = filedialog.askdirectory()
@@ -184,7 +182,19 @@ class XlflyApp:
             configs.save_settings(self.settings)
 
     def choose_temp(self):
-        print("selecting template")
+        # pop window to select the template to use
+        popup = TempWindow(self.root)
+        print(popup.selected_temp)
+        temp_initpath = os.path.join(
+            self.settings["tempfolder"], popup.selected_temp, "__init__.py"
+        )
+        if os.path.exists(os.path.join(temp_initpath)):
+            init = imp.load_source("__init__", temp_initpath)
+            init.main()
+        else:
+            raise FileNotFoundError(
+                f"Template {popup.selected_temp} does not have a __init__.py file"
+            )
 
     def init_temp(self):
         print("init template")

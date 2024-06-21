@@ -49,7 +49,13 @@ I used the icon from https://www.iconfinder.com/search?q=wings&price=free drawn 
 
     Hide the console 
 
+## Templates
 
+Specify a template root path to have all subfolders as options in the "templates > choose template" menu. Once selected, the main() function in the __init__.py file in that subfolder will be executed to initialize the template.
+
+This is useful when you want the user to set up the template on the fly
+
+UDF VBA functions - sometimes users wants to have functions they can directly use in the Excel cells. In that case, it is recommended to write *.xlam files with UDF inside, then move it to the user addin directory. Such copy file over operation can be done with xlfly.move_addin() function
 
 ## PythonPath
 
