@@ -11,6 +11,11 @@
             "program": "${file}",
             "justMyCode": true,
             "console": "integratedTerminal",
+            "args": [
+                "--init",
+                "-t",
+                "C:\\Users\\Tony\\OneDrive\\Documents\\git\\xlfly\\tests\\tempfolders"
+            ]
         }
     ]
 }
