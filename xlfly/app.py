@@ -1,6 +1,6 @@
 import tkinter as tk
 from tkinter import scrolledtext, filedialog
-import imp
+import importlib.util
 import queue
 import threading
 import sys
@@ -191,8 +191,12 @@ class XlflyApp:
             self.settings["tempfolder"], popup.selected_temp, "__init__.py"
         )
         if os.path.exists(os.path.join(temp_initpath)):
-            init = imp.load_source("__init__", temp_initpath)
+            spec = importlib.util.spec_from_file_location("__init__", temp_initpath)
+            init = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(init)
             init.main()
+            # init = imp.load_source("__init__", temp_initpath)
+            # init.main()
         else:
             raise FileNotFoundError(
                 f"Template {popup.selected_temp} does not have a __init__.py file"
