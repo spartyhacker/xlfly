@@ -17,6 +17,7 @@ xlwings = ">=0.28.0"
 pandas = ">=1.5.2"
 pywin32 = ">=300"
 pillow = ">=9.4.0"
+setuptools = ">=70.1.0"
 
 
 [build-system]
@@ -28,11 +29,5 @@ build-backend = "poetry.core.masonry.api"
 xly = "xlfly.scripts:main"
 
 [[tool.poetry.source]]
-name = "custom-pypi"
+name = "tuna"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-default = true
-
-[[tool.poetry.source]]
-name = "pypi"
-url = "https://pypi.org/simple/"
-default = false
