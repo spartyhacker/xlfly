@@ -185,6 +185,8 @@ class XlflyApp:
         # pop window to select the template to use
         popup = TempWindow(self.root)
         print(popup.selected_temp)
+        if popup.selected_temp is None:
+            return
         temp_initpath = os.path.join(
             self.settings["tempfolder"], popup.selected_temp, "__init__.py"
         )

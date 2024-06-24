@@ -69,6 +69,7 @@ class TempWindow:
 
     def on_cancel(self):
         print("Selection canceled")
+        self.selected_temp = None
         self.popup_window.destroy()
 
 
