@@ -1,4 +1,5 @@
 import tkinter as tk
+import ctypes
 from tkinter import scrolledtext, filedialog
 import importlib.util
 import queue
@@ -102,6 +103,8 @@ class XlflyApp:
         redirect_output()
 
         self.root = root
+        self.console_shown = False
+        self.console_thread = None
 
         # load in settings
         self.settings = configs.load_settings()
@@ -171,6 +174,9 @@ class XlflyApp:
             label="Restart", command=lambda: self.exec_func(self.restart_app)
         )
 
+        self.debug_menu.add_command(
+            label="Toggle Console", command=lambda: self.exec_func(self.toggle_console)
+        )
         # Templates menu
         self.template_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="Template", menu=self.template_menu)
@@ -225,13 +231,22 @@ class XlflyApp:
 
             messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
+    def toggle_console(self):
+        if self.console_shown:
+            self.hide_console()
+        else:
+            self.console_thread = threading.Thread(target=self.show_console)
+            self.console_thread.start()
+
     def show_console(self):
-        self.console_visible = True
-        self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+        ctypes.windll.kernel32.AllocConsole()
+        sys.stdout = open("CONOUT$", "w")
+        sys.stderr = open("CONOUT$", "w")
+        self.console_shown = True
 
     def hide_console(self):
-        self.console_visible = False
-        self.console_text.pack_forget()
+        ctypes.windll.kernel32.FreeConsole()
+        self.console_shown = False
 
     def restart_app(self):
         self.root.destroy()
@@ -258,6 +273,7 @@ class XlflyApp:
         rqm = df.loc["requirements"].value
         pkgs = check_requirements(rqm)
         if pkgs:
+            self.show_console()
             run_install(pkgs)
             self.restart_app()
         else:
