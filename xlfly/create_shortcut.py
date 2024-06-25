@@ -10,10 +10,9 @@ import sys
 import win32com.client
 
 
-# TODO: add this to post pip install
 def create_shortcut():
     print("Creating start menu item...")
-    python_path = sys.prefix
+    python_path = sys.base_prefix
     pythonw_path = os.path.join(python_path, "pythonw.exe")
     curr_path = os.path.dirname(__file__)
     icon_path = os.path.join(curr_path, "icon.ico")

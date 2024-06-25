@@ -29,6 +29,13 @@ CONFIG_PAGE_NAME = "xlfly"
 
 
 # functions
+def redirect_output():
+    "without this, pyminitab would throw stderr is None error"
+    log_directory = os.path.join(os.path.expanduser("~"), "xlfly_logs")
+    os.makedirs(log_directory, exist_ok=True)
+
+    sys.stdout = open(os.path.join(log_directory, "stdout.log"), "w")
+    sys.stderr = open(os.path.join(log_directory, "stderr.log"), "w")
 
 
 def create_config():
@@ -90,6 +97,10 @@ def create_debug_file():
 
 class XlflyApp:
     def __init__(self, root):
+
+        # redirect output before starting the program
+        redirect_output()
+
         self.root = root
 
         # load in settings
@@ -214,14 +225,6 @@ class XlflyApp:
 
             messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
-    # def toggle_console(self):
-    #     if self.console_visible:
-    #         self.console_text.pack_forget()
-    #     else:
-    #         self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
-
-    #     self.console_visible = not self.console_visible
-
     def show_console(self):
         self.console_visible = True
         self.console_text.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
@@ -255,7 +258,6 @@ class XlflyApp:
         rqm = df.loc["requirements"].value
         pkgs = check_requirements(rqm)
         if pkgs:
-            print("\nInstalling missing packages...")
             run_install(pkgs)
             self.restart_app()
         else:
