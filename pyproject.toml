@@ -20,6 +20,9 @@ pillow = ">=9.4.0"
 setuptools = ">=70.1.0"
 uv = "^0.2.15"
 
+holoviews = "^1.19.0"
+bokeh = "^3.4.2"
+tkinterweb = "^3.23.10"
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

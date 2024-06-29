@@ -1,12 +1,12 @@
 import tkinter as tk
 import ctypes
-from tkinter import scrolledtext, filedialog
+from tkinter import filedialog
 import importlib.util
 import threading
 import sys
 import traceback
 from PIL import Image, ImageTk
-from tkinter import ttk, messagebox, font, PhotoImage
+from tkinter import ttk, messagebox, font
 import shutil
 import os
 import subprocess
@@ -17,7 +17,7 @@ import importlib.metadata
 import xlwings as xw
 import pandas as pd
 import xlfly.copyover
-from xlfly.check_package import check_requirements, install_packages
+from xlfly.check_package import check_requirements
 import xlfly.configs as configs
 from xlfly.pop_template import TempWindow
 from xlfly.about import AboutWin
