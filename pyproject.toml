@@ -18,9 +18,8 @@ pandas = ">=1.5.2"
 pywin32 = ">=300"
 pillow = ">=9.4.0"
 setuptools = ">=70.1.0"
-
-
 uv = "^0.2.15"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"

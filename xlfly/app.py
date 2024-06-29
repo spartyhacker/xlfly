@@ -2,17 +2,12 @@ import tkinter as tk
 import ctypes
 from tkinter import scrolledtext, filedialog
 import importlib.util
-import queue
 import threading
 import sys
-import time
 import traceback
-import xlwings as xw
 from PIL import Image, ImageTk
 from tkinter import ttk, messagebox, font, PhotoImage
 import shutil
-from tkinter.scrolledtext import ScrolledText
-import sys
 import os
 import subprocess
 import xlfly
@@ -25,6 +20,7 @@ import xlfly.copyover
 from xlfly.check_package import check_requirements, install_packages
 import xlfly.configs as configs
 from xlfly.pop_template import TempWindow
+from xlfly.about import AboutWin
 
 CONFIG_PAGE_NAME = "xlfly"
 
@@ -98,7 +94,6 @@ def create_debug_file():
 
 class XlflyApp:
     def __init__(self, root):
-
         # redirect output before starting the program
         redirect_output()
 
@@ -111,8 +106,7 @@ class XlflyApp:
         self.selected_temp = None
 
         # UI
-        version = importlib.metadata.version("xlfly")
-        self.root.title(f"xlfly-{version}")
+        self.root.title("xlfly")
         self.root.attributes("-topmost", 1)
         icon_path = os.path.join(os.path.dirname(__file__), "icon.ico")
         self.root.iconbitmap(icon_path)
@@ -160,6 +154,9 @@ class XlflyApp:
         )
 
         self.file_menu.add_separator()
+        self.file_menu.add_command(
+            label="About", command=lambda: self.exec_func(self.about)
+        )
         self.file_menu.add_command(label="Exit", command=self.root.quit)
 
         # Debug menu
@@ -189,6 +186,11 @@ class XlflyApp:
             label="Choose Template",
             command=lambda: self.exec_func(self.choose_temp),
         )
+
+    # show about window
+    def about(self):
+        abwin = AboutWin(self.root)
+        abwin.show()
 
     # templates related functions
     def set_tempfolder(self):
@@ -259,7 +261,6 @@ class XlflyApp:
         self.restart_app()
 
     def cmd_condition(self):
-
         # get configs
         df = get_configs()
 
@@ -300,7 +301,6 @@ class XlflyApp:
         return pre_cmd, local_var
 
     def run_cell(self, selected: xw.Range):
-
         pre_cmd, local_var = self.cmd_condition()
 
         for key, val in local_var.items():
@@ -330,14 +330,12 @@ class XlflyApp:
             exec(c, locals(), globals())
 
     def run_selected(self):
-
         app = xw.apps.active
         selected = app.selection
         self.run_cell(selected)
 
 
 def _run_main():
-
     root = tk.Tk()
     app = XlflyApp(root)
     root.mainloop()
