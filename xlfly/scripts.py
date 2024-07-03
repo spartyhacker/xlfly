@@ -12,9 +12,9 @@ def main():
 
     if args.init:
         xlfly.create_shortcut.create_shortcut()
+        print("Created Start Menu Item")
 
     if args.tempfolder:
-
         print(f"add {args.tempfolder} as template path")
 
         settings = configs.load_settings()

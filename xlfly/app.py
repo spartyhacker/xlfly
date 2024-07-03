@@ -31,9 +31,6 @@ def redirect_output():
     log_directory = os.path.join(os.path.expanduser("~"), "xlfly_logs")
     os.makedirs(log_directory, exist_ok=True)
 
-    sys.stdout = open(os.path.join(log_directory, "stdout.log"), "w")
-    sys.stderr = open(os.path.join(log_directory, "stderr.log"), "w")
-
 
 def create_config():
     wb = xw.books.active
@@ -79,7 +76,8 @@ def run_install(pkgs):
 
 
 def sub_install_packages(pkgs):
-    command = [sys.executable, "-m", "pip", "install"] + pkgs
+    # command = [sys.executable, "-m", "pip", "install"] + pkgs
+    command = ["pip", "install"] + pkgs
     subprocess.check_call(command)
 
 
@@ -95,7 +93,7 @@ def create_debug_file():
 class XlflyApp:
     def __init__(self, root):
         # redirect output before starting the program
-        redirect_output()
+        # redirect_output()
 
         self.root = root
         self.console_shown = False
@@ -171,9 +169,6 @@ class XlflyApp:
             label="Restart", command=lambda: self.exec_func(self.restart_app)
         )
 
-        self.debug_menu.add_command(
-            label="Toggle Console", command=lambda: self.exec_func(self.toggle_console)
-        )
         # Templates menu
         self.template_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="Template", menu=self.template_menu)
@@ -214,8 +209,6 @@ class XlflyApp:
             init = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(init)
             init.main()
-            # init = imp.load_source("__init__", temp_initpath)
-            # init.main()
         else:
             raise FileNotFoundError(
                 f"Template {popup.selected_temp} does not have a __init__.py file"
@@ -233,30 +226,13 @@ class XlflyApp:
 
             messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
-    def toggle_console(self):
-        if self.console_shown:
-            self.hide_console()
-        else:
-            self.console_thread = threading.Thread(target=self.show_console)
-            self.console_thread.start()
-
-    def show_console(self):
-        ctypes.windll.kernel32.AllocConsole()
-        sys.stdout = open("CONOUT$", "w")
-        sys.stderr = open("CONOUT$", "w")
-        self.console_shown = True
-
-    def hide_console(self):
-        ctypes.windll.kernel32.FreeConsole()
-        self.console_shown = False
-
     def restart_app(self):
         self.root.destroy()
         python = sys.executable
         os.execl(python, python, *sys.argv)
 
     def update_xlfly(self):
-        command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
+        command = ["pip", "install", "xlfly", "-U"]
         subprocess.check_call(command)
         self.restart_app()
 
@@ -274,7 +250,7 @@ class XlflyApp:
         rqm = df.loc["requirements"].value
         pkgs = check_requirements(rqm)
         if pkgs:
-            self.show_console()
+            # self.show_console()
             run_install(pkgs)
             self.restart_app()
         else:

@@ -13,7 +13,9 @@ import win32com.client
 def create_shortcut():
     print("Creating start menu item...")
     python_path = sys.base_prefix
-    pythonw_path = os.path.join(python_path, "pythonw.exe")
+    # had to use python.exe, not pythonw.exe, to avoid headless browser not working
+    # this will lead to altair package not able to save as PNG issue
+    pythonw_path = os.path.join(python_path, "python.exe")
     curr_path = os.path.dirname(__file__)
     icon_path = os.path.join(curr_path, "icon.ico")
     script_path = os.path.join(curr_path, "app.py")
