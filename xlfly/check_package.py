@@ -20,9 +20,6 @@ def check_requirements(rqm_txt):
         if package_name in installed_packages:
             try:
                 pkg_resources.require(req)
-                print(
-                    f"{package_name} is installed and meets the version requirement: {req}"
-                )
             except pkg_resources.VersionConflict as e:
                 print(
                     f"{package_name} is installed but does not meet the version requirement: {req}"
