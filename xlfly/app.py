@@ -1,8 +1,6 @@
 import tkinter as tk
-import ctypes
 from tkinter import filedialog
 import importlib.util
-import threading
 import sys
 import traceback
 from PIL import Image, ImageTk
@@ -16,7 +14,6 @@ import importlib.metadata
 # to debug, you need this
 import xlwings as xw
 import pandas as pd
-import xlfly.copyover
 from xlfly.check_package import check_requirements
 import xlfly.configs as configs
 from xlfly.pop_template import TempWindow
@@ -236,6 +233,13 @@ class XlflyApp:
         subprocess.check_call(command)
         self.restart_app()
 
+    def appendpath(self, path_str: str):
+        if not isinstance(path_str, str):
+            return
+
+        if os.path.exists(path_str):
+            sys.path.append(path_str)
+
     def cmd_condition(self):
         # get configs
         df = get_configs()
@@ -244,7 +248,11 @@ class XlflyApp:
         curr_wb_path = xw.books.active.fullname
         if os.path.exists(curr_wb_path):
             sys.path.append(os.path.dirname(curr_wb_path))
-        sys.path.append(df.loc["script_path"].value)
+        self.appendpath(df.loc["script_path"].value)
+
+        # append default folder, for case when there is no xlfly page to set up
+        defaultfolder = os.path.join(self.settings["tempfolder"], "default")
+        self.appendpath(defaultfolder)
 
         # check packages
         rqm = df.loc["requirements"].value
@@ -283,6 +291,9 @@ class XlflyApp:
             locals()[key] = val
 
         exec(pre_cmd)
+
+        # from default folder's default.py import all functions
+        import default
 
         # run the commands
         # support for non-continous range selection

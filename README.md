@@ -61,6 +61,11 @@ UDF VBA functions - sometimes users wants to have functions they can directly us
 
 When run python, both `current workbook` and `script_path` setting from setting page will be added to pythonpath. You can put your draft python script file in the same folder as current Excel file to debug.
 
+
+## default folder
+
+Within template folder, you can add "default" subfolder to be added to pythonpath by default, and the default.py file will be imported automatically. This is useful if you want to create Excel use cases where user can work on an empty Excel file without installing anything or making changes to Excel file
+
 ## Debug
 
 To debug the scripts in Excel, run the menu: tools > create debug script. There will be a debug.py file to the same folder as current Excel file. You can start from there to debug
