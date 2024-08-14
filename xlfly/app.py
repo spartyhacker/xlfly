@@ -53,7 +53,8 @@ def get_configs():
     wb = xw.books.active
 
     if CONFIG_PAGE_NAME not in [s.name for s in wb.sheets]:
-        raise ValueError("Config page does not exist")
+        return None
+        # raise ValueError("Config page does not exist")
     else:
         df = (
             wb.sheets[CONFIG_PAGE_NAME]["A1:B1"]
@@ -246,16 +247,23 @@ class XlflyApp:
 
         # append path
         curr_wb_path = xw.books.active.fullname
+
         if os.path.exists(curr_wb_path):
             sys.path.append(os.path.dirname(curr_wb_path))
-        self.appendpath(df.loc["script_path"].value)
+
+        if df is not None:
+            self.appendpath(df.loc["script_path"].value)
 
         # append default folder, for case when there is no xlfly page to set up
         defaultfolder = os.path.join(self.settings["tempfolder"], "default")
         self.appendpath(defaultfolder)
 
         # check packages
-        rqm = df.loc["requirements"].value
+        if df is not None:
+            rqm = df.loc["requirements"].value
+        else:
+            rqm = None
+
         pkgs = check_requirements(rqm)
         if pkgs:
             # self.show_console()
@@ -265,22 +273,24 @@ class XlflyApp:
             pass
 
         # execute pre-command
-        pre_cmd = df.loc["pre_cmd"].value
+        if df is not None:
+            pre_cmd = df.loc["pre_cmd"].value
+        else:
+            pre_cmd = None
 
         # define variables
         wb = xw.books.active
-        if CONFIG_PAGE_NAME not in [s.name for s in wb.sheets]:
-            raise ValueError("Config page does not exist")
-
-        config_sht = xw.books.active.sheets[CONFIG_PAGE_NAME]
-        df_var: pd.DataFrame = (
-            config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
-        )
-
         local_var = {}
-        if len(df_var.dropna()) != 0:
-            for id, r in df_var.iterrows():
-                local_var[r.Name] = r.Value
+        if CONFIG_PAGE_NAME in [s.name for s in wb.sheets]:
+            # raise ValueError("Config page does not exist")
+            config_sht = xw.books.active.sheets[CONFIG_PAGE_NAME]
+            df_var: pd.DataFrame = (
+                config_sht.tables["var"].range.options(pd.DataFrame, index=False).value
+            )
+
+            if len(df_var.dropna()) != 0:
+                for id, r in df_var.iterrows():
+                    local_var[r.Name] = r.Value
 
         return pre_cmd, local_var
 
@@ -290,7 +300,8 @@ class XlflyApp:
         for key, val in local_var.items():
             locals()[key] = val
 
-        exec(pre_cmd)
+        if pre_cmd:
+            exec(pre_cmd)
 
         # from default folder's default.py import all functions
         import default
