@@ -1,4 +1,5 @@
 import tkinter as tk
+import inspect
 from tkinter import filedialog
 import importlib.util
 import sys
@@ -206,7 +207,14 @@ class XlflyApp:
             spec = importlib.util.spec_from_file_location("__init__", temp_initpath)
             init = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(init)
-            init.main()
+
+            # if one parameter, only allow app object to be passed for manipulation
+            signature = inspect.signature(init.main)
+            num_params = len(signature.parameters)
+            if num_params == 0:
+                init.main()
+            elif num_params == 1:
+                init.main(self)
         else:
             raise FileNotFoundError(
                 f"Template {popup.selected_temp} does not have a __init__.py file"
