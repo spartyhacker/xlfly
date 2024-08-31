@@ -8,6 +8,11 @@ import shutil
 
 # Get the path to the AddIns directory
 
+apps = xw.apps
+
+if len(apps) == 0:
+    app = xw.App(visible=True)
+
 
 def move_addin(xlam_file: str):
     "move xlam file to addin directory"
