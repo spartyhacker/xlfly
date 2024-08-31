@@ -2,6 +2,13 @@ import xlfly.create_shortcut
 import os
 import xlfly.configs as configs
 import argparse
+import importlib
+
+
+def init_default(init_file: str):
+    spec = importlib.util.spec_from_file_location("__init__", init_file)
+    init = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(init)
 
 
 def main():
@@ -23,6 +30,9 @@ def main():
             print(f"Selected folder: {folder_path}")
             settings["tempfolder"] = folder_path
             configs.save_settings(settings)
+            print("Initilizing default init...")
+            init_default(folder_path)
+            print("Done")
 
 
 if __name__ == "__main__":

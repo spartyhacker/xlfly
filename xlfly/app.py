@@ -220,9 +220,6 @@ class XlflyApp:
                 f"Template {popup.selected_temp} does not have a __init__.py file"
             )
 
-    def init_temp(self):
-        print("init template")
-
     def exec_func(self, func):
         try:
             func()
