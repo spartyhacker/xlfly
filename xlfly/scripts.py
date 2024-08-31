@@ -10,6 +10,7 @@ def init_default(default_init_file: str):
     spec = importlib.util.spec_from_file_location("__init__", default_init_file)
     init = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(init)
+    init.setup()
 
 
 def main():

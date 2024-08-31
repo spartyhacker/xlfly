@@ -66,6 +66,8 @@ When run python, both `current workbook` and `script_path` setting from setting 
 
 Within template folder, you can add "default" subfolder to be added to pythonpath by default, and the default.py file will be imported automatically. This is useful if you want to create Excel use cases where user can work on an empty Excel file without installing anything or making changes to Excel file
 
+Once installing xlfly, the __init__:setup() will be executed
+
 ## Debug
 
 To debug the scripts in Excel, run the menu: tools > create debug script. There will be a debug.py file to the same folder as current Excel file. You can start from there to debug
