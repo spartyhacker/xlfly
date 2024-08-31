@@ -5,8 +5,8 @@ import argparse
 import importlib
 
 
-def init_default(init_file: str):
-    spec = importlib.util.spec_from_file_location("__init__", init_file)
+def init_default(default_folder: str):
+    spec = importlib.util.spec_from_file_location("__init__", default_folder)
     init = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(init)
 
@@ -31,7 +31,8 @@ def main():
             settings["tempfolder"] = folder_path
             configs.save_settings(settings)
             print("Initilizing default init...")
-            init_default(folder_path)
+            default_folder = os.path.join(folder_path, "default")
+            init_default(default_folder)
             print("Done")
 
 
