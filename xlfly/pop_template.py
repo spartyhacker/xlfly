@@ -7,6 +7,7 @@ from xlfly.configs import load_settings
 class TempWindow:
     def __init__(self, parent):
         self.parent = parent
+        self.selected_temp = None
         settings = load_settings()
         tempfolder = settings["tempfolder"]
 

@@ -171,14 +171,15 @@ class XlflyApp:
         # Templates menu
         self.template_menu = tk.Menu(self.menu_bar, tearoff=0)
         self.menu_bar.add_cascade(label="Template", menu=self.template_menu)
-        self.template_menu.add_command(
-            label="Set Template Folder",
-            command=lambda: self.exec_func(self.set_tempfolder),
-        )
 
         self.template_menu.add_command(
             label="Choose Template",
             command=lambda: self.exec_func(self.choose_temp),
+        )
+
+        self.template_menu.add_command(
+            label="Set Template Folder",
+            command=lambda: self.exec_func(self.set_tempfolder),
         )
 
     # show about window
@@ -197,9 +198,9 @@ class XlflyApp:
     def choose_temp(self):
         # pop window to select the template to use
         popup = TempWindow(self.root)
-        print(popup.selected_temp)
         if popup.selected_temp is None:
             return
+        print(popup.selected_temp)
         temp_initpath = os.path.join(
             self.settings["tempfolder"], popup.selected_temp, "__init__.py"
         )
