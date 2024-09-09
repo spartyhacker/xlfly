@@ -249,7 +249,7 @@ class XlflyApp:
 
     def cmd_condition(self):
         # get configs
-        df = get_configs()
+        df_config = get_configs()
 
         # append path
         curr_wb_path = xw.books.active.fullname
@@ -257,16 +257,31 @@ class XlflyApp:
         if os.path.exists(curr_wb_path):
             sys.path.append(os.path.dirname(curr_wb_path))
 
-        if df is not None:
-            self.appendpath(df.loc["script_path"].value)
+        if df_config is not None:
+            self.appendpath(df_config.loc["script_path"].value)
 
         # append default folder, for case when there is no xlfly page to set up
         defaultfolder = os.path.join(self.settings["tempfolder"], "default")
         self.appendpath(defaultfolder)
 
         # check packages
-        if df is not None:
-            rqm = df.loc["requirements"].value
+        if df_config is not None:
+            rqm = df_config.loc["requirements"].value
+
+            # Need to find the default folder's requirements.txt to install
+            # missing dependencies
+            default_rqm_file = os.path.join(
+                self.settings["tempfolder"], r"default/requirements.txt"
+            )
+            if os.path.exists(default_rqm_file):
+                with open(default_rqm_file, "r") as file:
+                    # Read the contents of the file into a string
+                    default_rqm = file.read()
+                    default_rqm = default_rqm.replace("\n", " ")
+                    if rqm is not None:
+                        rqm = " ".join([rqm, default_rqm])
+                    else:
+                        rqm = default_rqm
         else:
             rqm = None
 
@@ -279,8 +294,8 @@ class XlflyApp:
             pass
 
         # execute pre-command
-        if df is not None:
-            pre_cmd = df.loc["pre_cmd"].value
+        if df_config is not None:
+            pre_cmd = df_config.loc["pre_cmd"].value
         else:
             pre_cmd = None
 
