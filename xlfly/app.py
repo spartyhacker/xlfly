@@ -232,12 +232,11 @@ class XlflyApp:
 
     def restart_app(self):
         "restart the current program"
-        # self.root.destroy()
-        # python = sys.executable
-        # os.execl(python, python, *sys.argv)
-
-        # use execv to replace current running instance of app
-        os.execv(sys.executable, ["python"] + sys.argv)
+        self.root.destroy()
+        python_exe = sys.executable
+        # had to use subproess, otherwise it will fail due to c:\program files path
+        # having blanks
+        subprocess.run([python_exe] + sys.argv)
 
     def update_xlfly(self):
         "update xlfly app"
