@@ -10,9 +10,11 @@ Note: the author is from manufacturing industry where Excel is heavily used to d
 
 If you are installed multiple pythons in your windows platform, you can use:
 
-`py -3.12 -m pip config set global.index-url https://pypi.org/simple`
-`py -3.12 -m pip install xlfly`
-`py -3.12 -m xlfly.scripts --init -t path\to\template\folder`
+* `py -3.12 -m pip config set global.index-url https://pypi.org/simple`
+* `py -3.12 -m pip install xlfly`
+* `py -3.12 -m xlfly.scripts --init -t path\to\template\folder`
+
+where `py` is the python launcher in Windows to specify the version to use
 
 ### Usage
 
