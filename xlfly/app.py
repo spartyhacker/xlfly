@@ -75,8 +75,8 @@ def run_install(pkgs):
 
 
 def sub_install_packages(pkgs):
-    # command = [sys.executable, "-m", "pip", "install"] + pkgs
-    command = ["pip", "install"] + pkgs
+    # use python -m pip to conform to virtual environment
+    command = [sys.executable, "-m", "pip", "install"] + pkgs
     subprocess.check_call(command)
 
 
@@ -231,12 +231,19 @@ class XlflyApp:
             messagebox.showerror("Error", repr(e) + f"\n\n{tb_str}")
 
     def restart_app(self):
-        self.root.destroy()
-        python = sys.executable
-        os.execl(python, python, *sys.argv)
+        "restart the current program"
+        # self.root.destroy()
+        # python = sys.executable
+        # os.execl(python, python, *sys.argv)
+
+        # use execv to replace current running instance of app
+        os.execv(sys.executable, ["python"] + sys.argv)
 
     def update_xlfly(self):
-        command = ["pip", "install", "xlfly", "-U"]
+        "update xlfly app"
+
+        command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
+        # command = ["pip", "install", "xlfly", "-U"]
         subprocess.check_call(command)
         self.restart_app()
 
@@ -287,7 +294,6 @@ class XlflyApp:
 
         pkgs = check_requirements(rqm)
         if pkgs:
-            # self.show_console()
             run_install(pkgs)
             self.restart_app()
         else:

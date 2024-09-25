@@ -1,4 +1,4 @@
-/tests
 xlfly/__pycache__/
 dist
 venv
+tests/templates/default/__pycache__/

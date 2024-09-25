@@ -6,6 +6,16 @@ Note: the author is from manufacturing industry where Excel is heavily used to d
 
 ## Usage for non-programmers
 
+### Install
+
+If you are installed multiple pythons in your windows platform, you can use:
+
+`py -3.12 -m pip config set global.index-url https://pypi.org/simple`
+`py -3.12 -m pip install xlfly`
+`py -3.12 -m xlfly.scripts --init -t path\to\template\folder`
+
+### Usage
+
 Fire up an Excel, write python commands in a cell or comments, select it, click "Run Python" to execute!
 
 <img src="doc/xlfly_demo.gif" width="500">
