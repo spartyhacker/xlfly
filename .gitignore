@@ -1,3 +1,4 @@
 /tests
 xlfly/__pycache__/
 dist
+venv
