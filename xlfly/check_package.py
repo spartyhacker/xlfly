@@ -36,6 +36,8 @@ def check_requirements(rqm_txt):
 def install_packages(packages):
     if packages:
         print("\nInstalling missing packages...")
+        # when there are multiple pythons in a system, following does not guarantee using current
+        # python.exe. Not sure why yet
         subprocess.check_call([sys.executable, "-m", "pip", "install"] + packages)
     else:
         print("\nAll packages are already installed and meet the version requirements.")

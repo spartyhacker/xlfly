@@ -321,6 +321,8 @@ class XlflyApp:
         return pre_cmd, local_var
 
     def run_cell(self, selected: xw.Range):
+        "when clicking button, run this"
+
         pre_cmd, local_var = self.cmd_condition()
 
         for key, val in local_var.items():
@@ -331,6 +333,10 @@ class XlflyApp:
 
         # from default folder's default.py import all functions
         import default
+
+        # if default module has run_callback() function, run it
+        if hasattr(default, "run_callback"):
+            default.run_callback()
 
         # run the commands
         # support for non-continous range selection

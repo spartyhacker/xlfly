@@ -70,6 +70,8 @@ Within template folder, you can add "default" subfolder to pythonpath by default
 
 When installing xlfly, the `template_root_folder/default/__init__:setup()` will be executed. 
 
+for the default.py, put `run_callback` function to be called every time a user click the `run python` button
+
 ## Others
 
 Icon is from [Icon Finder](https://www.iconfinder.com/icons/2785363/blockchain_wings_icon) by Monsieur Steven Ankri.
