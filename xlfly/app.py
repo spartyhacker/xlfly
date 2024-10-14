@@ -334,10 +334,6 @@ class XlflyApp:
         # from default folder's default.py import all functions
         import default
 
-        # if default module has run_callback() function, run it
-        if hasattr(default, "run_callback"):
-            default.run_callback()
-
         # run the commands
         # support for non-continous range selection
         cmds = {}
@@ -358,6 +354,10 @@ class XlflyApp:
 
         for c in cmd:
             exec(c, locals(), globals())
+
+            # if default module has run_callback() function, run it
+            if hasattr(default, "run_callback"):
+                default.run_callback(c)
 
     def run_selected(self):
         app = xw.apps.active
