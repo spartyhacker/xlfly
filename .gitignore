@@ -2,3 +2,4 @@ xlfly/__pycache__/
 dist
 venv
 tests/templates/default/__pycache__/
+tests/templates/cycle setup/__pycache__/

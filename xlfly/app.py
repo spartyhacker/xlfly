@@ -196,11 +196,17 @@ class XlflyApp:
             configs.save_settings(self.settings)
 
     def choose_temp(self):
+        "choose a template to open"
+
+        # if no active Excel, create one
+        # apps = xw.apps
+        # if len(apps) == 0:
+        #     app = xw.apps.add(visible=True)
+
         # pop window to select the template to use
         popup = TempWindow(self.root)
         if popup.selected_temp is None:
             return
-        print(popup.selected_temp)
         temp_initpath = os.path.join(
             self.settings["tempfolder"], popup.selected_temp, "__init__.py"
         )
@@ -242,8 +248,21 @@ class XlflyApp:
         "update xlfly app"
 
         command = [sys.executable, "-m", "pip", "install", "xlfly", "-U"]
-        # command = ["pip", "install", "xlfly", "-U"]
         subprocess.check_call(command)
+
+        # load default template to create functionality
+        # get the default folder path
+        from xlfly.scripts import init_default
+
+        settings = configs.load_settings()
+        if "tempfolder" not in settings.keys():
+            return
+
+        tempfolder = settings["tempfolder"]
+        default_init_file = os.path.join(tempfolder, "default", "__init__.py")
+        init_default(default_init_file)
+
+        # restart at the end
         self.restart_app()
 
     def appendpath(self, path_str: str):
