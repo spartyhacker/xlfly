@@ -9,7 +9,9 @@ def check_requirements(rqm_txt):
 
     requirements = rqm_txt.split(" ")
 
-    requirements = [req.strip() for req in requirements]
+    # here the repalce is for the fact: python changes all underscore to dash
+    # for all package names
+    requirements = [req.strip().replace("_", "-") for req in requirements]
     installed_packages = {pkg.key: pkg.version for pkg in pkg_resources.working_set}
 
     missing_packages = []

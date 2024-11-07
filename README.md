@@ -50,6 +50,18 @@ Current workbook's path module will be loaded first. Such behavior is useful whe
 
     Convert the range to link texts values. It is used for cases where you want to preserve the link to update the data in the future. Useful if you got data from another Excel file, and that file changes.
 
+### Picture Run
+
+When selecting a picture, click Run Python, the app's run_pic() function will be run. To customize, in the 
+pre-cmd cell in 'xlfly' sheet, put the following inside. 
+
+```python
+def run_pic(pic):
+    print("new method")
+
+self.run_pic =  run_pic
+```
+
 
 ### Debug
 

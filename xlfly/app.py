@@ -89,11 +89,21 @@ def create_debug_file():
     print("debug.py created")
 
 
+def run_pic(pic: xw.Picture):
+    """Event for Selecting Picture to Run
+
+    This function is to be replaced with other defined functions
+    """
+
+    print(f"Selection is picture: {pic.name} in sheet {pic.parent.name}")
+
+
 class XlflyApp:
     def __init__(self, root):
         # redirect output before starting the program
         # redirect_output()
 
+        self.run_pic = run_pic
         self.root = root
         self.console_shown = False
         self.console_thread = None
@@ -197,11 +207,6 @@ class XlflyApp:
 
     def choose_temp(self):
         "choose a template to open"
-
-        # if no active Excel, create one
-        # apps = xw.apps
-        # if len(apps) == 0:
-        #     app = xw.apps.add(visible=True)
 
         # pop window to select the template to use
         popup = TempWindow(self.root)
@@ -347,8 +352,11 @@ class XlflyApp:
         for key, val in local_var.items():
             locals()[key] = val
 
+        # to override the run_pic() function, use this:
+        # self.run_pic =
+
         if pre_cmd:
-            exec(pre_cmd)
+            exec(pre_cmd, locals(), globals())
 
         # from default folder's default.py import all functions
         import default
@@ -371,6 +379,7 @@ class XlflyApp:
 
         cmd = list(cmds.values())
 
+        # this is for logging purpose
         for c in cmd:
             exec(c, locals(), globals())
 
@@ -378,10 +387,35 @@ class XlflyApp:
             if hasattr(default, "run_callback"):
                 default.run_callback(c)
 
+    def run_pic_full_process(self, pic):
+        pre_cmd, local_var = self.cmd_condition()
+
+        for key, val in local_var.items():
+            locals()[key] = val
+
+        if pre_cmd:
+            exec(pre_cmd, locals(), globals())
+
+        # from default folder's default.py import all functions
+        import default
+
+        self.run_pic(pic)
+
     def run_selected(self):
+        "callback when clicking button"
+
         app = xw.apps.active
         selected = app.selection
-        self.run_cell(selected)
+        selection_api = app.api.Selection
+        if isinstance(selected, xw.Range):
+            self.run_cell(selected)
+        elif selection_api.ShapeRange.Type == 13:  # if it is a picture
+            pic_name = selection_api.ShapeRange.Name
+            print(f"pic name: {pic_name}")
+            pic = xw.books.active.sheets.active.pictures[pic_name]
+            self.run_pic_full_process(pic)
+        else:
+            print("not a range nor a picture")
 
 
 def _run_main():
